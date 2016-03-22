@@ -18,4 +18,14 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^login$', 'ribbit_app.views.login_view'), # lgoin
+    url(r'^logout$', 'ribbit_app.views.logout_view'), # logout
+    url(r'^signup$', 'ribbit_app.views.signup'), # signup
 ]
+
+urlpatterns = patterns('',
+	url(r'^$', 'ribbit_app.views.index'), # root
+    url(r'^login$', 'ribbit_app.views.login_view'), # lgoin
+    url(r'^logout$', 'ribbit_app.views.logout_view'), # logout
+    url(r'^signup$', 'ribbit_app.views.signup'), # signup
+)
