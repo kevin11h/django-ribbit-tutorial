@@ -7,6 +7,7 @@ from ribbit_app.models import Ribbit
 # Create your views here.
 def index(request, auth_form=None, user_form=None):
 	# User is logged
+	
 	if request.user.is_authenticated():
 		ribbit_form = RibbitForm()
 		user = request.user
