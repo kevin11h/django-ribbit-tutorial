@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from ribbit_app.forms import AuthenticateForm, UserCreateForm, RibbitForm
 from ribbit_app.models import Ribbit
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request, auth_form=None, user_form=None):
@@ -12,6 +13,7 @@ def index(request, auth_form=None, user_form=None):
 		ribbit_form = RibbitForm()
 		user = request.user
 		ribbits_self = Ribbit.objects.filter(user=user.id)
+		ribbits_buddies=Ribbit.objects.filter(user__userprofile__in=user.profile.follows.all)
 		ribbits = ribbits_self | ribbits_buddies
 
 		return render(request,
@@ -57,3 +59,30 @@ def signup(request):
 		else:
 			return index(request, user_form=user_form)
 	return redirect('/')
+
+@login_required
+def submit(request):
+	if request.method == "POST":
+		ribbit_form = RibbitForm(data=request.POST)
+		next_url = request.POST.get("next_url","/")
+
+		if ribbit_form.is_valid():
+			ribbit = ribbit_form.save(commit =False)
+			ribbit.user= request.user
+			ribbit.save()
+			return redirect(next_url)
+		else:
+			return public(request, ribbit_form)
+
+		return redirect('/')
+
+@login_required
+def public(request, ribbit_form=None):
+	ribbit_form = ribbit_form or RibbitForm()
+	ribbits = Ribbit.objects.reverse()[:10]
+	return render(request,
+		'public.html',
+		{'ribbit_form': ribbit_form,
+		'next_url': '/ribbits',
+		'ribbits': ribbits,
+		'username': request.user.username})

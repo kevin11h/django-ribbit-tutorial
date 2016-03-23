@@ -16,7 +16,7 @@ class UserCreateForm(UserCreationForm):
 		form = super(UserCreateForm, self).is_valid()
 		for f, error in self.errors.iteritems():
 			if f != '__all_':
-				self.fields[f].widget.attrs.update({'class': 'error', 'value': strip_tags(error)})
+				self.fields[f].widget.attrs.update({'class': 'error', 'value': strip_tags(", ".join(error))})
 		return form
 
 	class Meta:
@@ -31,11 +31,12 @@ class AuthenticateForm(AuthenticationForm):
 		form = super(AuthenticationForm, self).is_valid()
 		for f, error in self.errors.iteritems():
 			if f != '__all__':
-				self.fields[f].widgt.attrs.update({'class': 'error', 'value': strip_tags(error)})
+				self.fields[f].widgt.attrs.update({'class': 'error', 'value': strip_tags(", ".join(error))})
 		return form
 
 class RibbitForm(forms.ModelForm):
-	content = forms.CharField(required=True, widget=forms.widgets.Textarea(attrs={'class': 'ribbitText'}))				
+	content = forms.CharField(required=True,
+		widget=forms.widgets.Textarea(attrs={'class': 'ribbitText'}))				
 
 	def is_valid(self):
 		form = super(RibbitForm, self).is_valid()
@@ -44,6 +45,6 @@ class RibbitForm(forms.ModelForm):
 				self.fields[f].widget.attrs.update({'class': 'error ribbitText'})
 		return form
 
-		class Meta:
-			model = Ribbit
-			exclude = ('user',)
+	class Meta:
+		model = Ribbit
+		exclude = ('user',)
